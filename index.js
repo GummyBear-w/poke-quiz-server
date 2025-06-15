@@ -303,12 +303,16 @@ async function startNextQuestion(roomCode) {
 				clearInterval(room.timer);
 				room.timer = null;
 
+				room.questionAnswered = true; // 標記題目已處理，避免有人晚提交
+
 				io.to(roomCode).emit("show_answer", {
 					correctAnswer: questionData.correctAnswer,
 				});
 
-				// 時間到也是直接切換
-				startNextQuestion(roomCode);
+				// 等 1 秒再切下一題，讓玩家看到答案
+				room.nextQuestionTimer = setTimeout(() => {
+					startNextQuestion(roomCode);
+				}, 1000);
 			}
 		}, 1000);
 	} catch (error) {
