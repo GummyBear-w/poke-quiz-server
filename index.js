@@ -71,19 +71,17 @@ io.on("connection", (socket) => {
 		});
 	});
 
-	socket.on("update_settings", ({ roomCode, newSettings }) => {
+	socket.on("update_room_settings", ({ roomCode, settings }) => {
 		const room = rooms[roomCode];
 		if (!room) return;
 
-		// 更新設定
 		room.settings = {
 			...room.settings,
-			...newSettings,
+			...settings,
 		};
 
 		console.log(`✅ 房間 ${roomCode} 設定已更新為:`, room.settings);
 
-		// 發送新的設定給所有人
 		io.to(roomCode).emit("room_update", {
 			roomCode,
 			hostId: room.hostId,
