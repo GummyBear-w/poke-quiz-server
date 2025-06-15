@@ -108,6 +108,17 @@ io.on("connection", (socket) => {
 		}
 
 		const userAnswer = answer.toLowerCase().trim();
+
+		if (!userAnswer) {
+			io.to(roomCode).emit("player_answered", {
+				playerId: socket.id,
+				nickname: player.nickname,
+				answer,
+				correct: false,
+			});
+			return;
+		}
+
 		const acceptedAnswers = room.currentQuestionData?.acceptedAnswers || [];
 
 		let isCorrect = false;
