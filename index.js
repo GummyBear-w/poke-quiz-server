@@ -146,14 +146,15 @@ io.on("connection", (socket) => {
 			// 停止所有計時器
 			clearAllTimers(room);
 
-			// 顯示答案
 			io.to(roomCode).emit("show_answer", {
 				correctAnswer: room.currentQuestionData.correctAnswer,
+				answeredBy: player.nickname, // 這樣可以在前端顯示是誰答對
 			});
 
-			// 立即切換下一題 - 不使用任何延遲
-			console.log(`🚀 玩家 ${player.nickname} 答對，立即切換下一題`);
-			startNextQuestion(roomCode);
+			// 延遲切題
+			room.nextQuestionTimer = setTimeout(() => {
+				startNextQuestion(roomCode);
+			}, 1500);
 		}
 	});
 
