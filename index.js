@@ -71,6 +71,27 @@ io.on("connection", (socket) => {
 		});
 	});
 
+	socket.on("update_settings", ({ roomCode, newSettings }) => {
+		const room = rooms[roomCode];
+		if (!room) return;
+
+		// 更新設定
+		room.settings = {
+			...room.settings,
+			...newSettings,
+		};
+
+		console.log(`✅ 房間 ${roomCode} 設定已更新為:`, room.settings);
+
+		// 發送新的設定給所有人
+		io.to(roomCode).emit("room_update", {
+			roomCode,
+			hostId: room.hostId,
+			players: room.players,
+			settings: room.settings,
+		});
+	});
+
 	socket.on("start_next_question", () => {
 		const roomCode = socketToRoom[socket.id];
 		const room = rooms[roomCode];
